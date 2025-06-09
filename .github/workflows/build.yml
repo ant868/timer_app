@@ -1,0 +1,23 @@
+name: Build NRO
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container:
+      image: devkitpro/devkita64
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Build
+        run: |
+          make
+      - name: Upload NRO
+        uses: actions/upload-artifact@v3
+        with:
+          name: timer_app.nro
+          path: output/timer_app.nro
