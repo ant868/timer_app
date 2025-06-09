@@ -1,23 +1,26 @@
 name: Build NRO
 
-on:
-  push:
-    branches: [ main ]
+on: [push]
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    container:
-      image: devkitpro/devkita64
 
     steps:
-      - uses: actions/checkout@v3
+    - name: Checkout repository
+      uses: actions/checkout@v4
 
-      - name: Build
-        run: |
-          make
-      - name: Upload NRO
-        uses: actions/upload-artifact@v3
-        with:
-          name: timer_app.nro
-          path: output/timer_app.nro
+    - name: Set up devkitPro
+      run: |
+        sudo apt update
+        sudo apt install -y devkitpro-pacman
+        sudo dkp-pacman -Sy --noconfirm switch-dev
+
+    - name: Build project
+      run: make
+
+    - name: Upload NRO
+      uses: actions/upload-artifact@v4
+      with:
+        name: timer_app_nro
+        path: output/timer_app.nro
