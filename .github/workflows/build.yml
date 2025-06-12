@@ -1,25 +1,27 @@
+name: Build Timer App
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
 jobs:
   build:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
+    container:
+      image: devkitpro/devkitpro:latest
 
     steps:
-    - name: Checkout repo
+    - name: Checkout repository
       uses: actions/checkout@v3
 
-    - name: Install devkitPro using official installer
-      run: |
-        sudo apt update
-        sudo apt install -y curl tar xz-utils
-        curl -LO https://downloads.devkitpro.org/devkitproinstaller
-        chmod +x devkitproinstaller
-        sudo ./devkitproinstaller -s switch-dev
-
-    - name: Set environment variables
-      run: |
-        echo "DEVKITPRO=/opt/devkitpro" >> $GITHUB_ENV
-        echo "DEVKITA64=/opt/devkitpro/devkitA64" >> $GITHUB_ENV
-        echo "DEVKITARM=/opt/devkitpro/devkitARM" >> $GITHUB_ENV
-
-    - name: Build .nro
+    - name: Build NRO file
       run: |
         make
+
+    - name: Upload NRO as artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: timer_app.nro
+        path: output/timer_app.nro
