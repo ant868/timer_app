@@ -6,19 +6,20 @@ jobs:
     - name: Checkout repo
       uses: actions/checkout@v3
 
-    - name: Set up devkitPro
+    - name: Install devkitPro using official installer
       run: |
-        sudo mkdir -p /etc/apt/keyrings
-        curl -fsSL https://apt.devkitpro.org/devkitpro-pub.gpg | gpg --dearmor | sudo tee /etc/apt/keyrings/devkitpro.gpg > /dev/null
-        echo "deb [signed-by=/etc/apt/keyrings/devkitpro.gpg] https://apt.devkitpro.org stable main" | sudo tee /etc/apt/sources.list.d/devkitpro.list
         sudo apt update
-        sudo apt install devkitpro-pacman -y
-        sudo dkp-pacman -Sy
-        sudo dkp-pacman -S --noconfirm switch-dev switch-tools
+        sudo apt install -y curl tar xz-utils
+        curl -LO https://downloads.devkitpro.org/devkitproinstaller
+        chmod +x devkitproinstaller
+        sudo ./devkitproinstaller -s switch-dev
+
+    - name: Set environment variables
+      run: |
+        echo "DEVKITPRO=/opt/devkitpro" >> $GITHUB_ENV
+        echo "DEVKITA64=/opt/devkitpro/devkitA64" >> $GITHUB_ENV
+        echo "DEVKITARM=/opt/devkitpro/devkitARM" >> $GITHUB_ENV
 
     - name: Build .nro
       run: |
-        export DEVKITPRO=/opt/devkitpro
-        export DEVKITARM=$DEVKITPRO/devkitARM
-        export DEVKITA64=$DEVKITPRO/devkitA64
         make
