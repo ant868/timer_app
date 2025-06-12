@@ -29,4 +29,23 @@ jobs:
         export DEVKITPRO=/opt/devkitpro
         export DEVKITARM=$DEVKITPRO/devkitARM
         export DEVKITA64=$DEVKITPRO/devkitA64
+        make steps:
+    - name: Checkout repo
+      uses: actions/checkout@v3
+
+    - name: Set up devkitPro
+      run: |
+        sudo mkdir -p /etc/apt/keyrings
+        curl -fsSL https://apt.devkitpro.org/devkitpro-pub.gpg | gpg --dearmor | sudo tee /etc/apt/keyrings/devkitpro.gpg > /dev/null
+        echo "deb [signed-by=/etc/apt/keyrings/devkitpro.gpg] https://apt.devkitpro.org stable main" | sudo tee /etc/apt/sources.list.d/devkitpro.list
+        sudo apt update
+        sudo apt install devkitpro-pacman -y
+        sudo dkp-pacman -Sy
+        sudo dkp-pacman -S --noconfirm switch-dev switch-tools
+
+    - name: Build .nro
+      run: |
+        export DEVKITPRO=/opt/devkitpro
+        export DEVKITARM=$DEVKITPRO/devkitARM
+        export DEVKITA64=$DEVKITPRO/devkitA64
         make
