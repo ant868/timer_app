@@ -11,10 +11,10 @@ jobs:
     runs-on: ubuntu-22.04
 
     steps:
-    - name: Checkout repo
+    - name: Checkout repository
       uses: actions/checkout@v3
 
-    - name: Set up devkitPro manually
+    - name: Set up devkitPro environment
       run: |
         sudo mkdir -p /etc/apt/keyrings
         curl -fsSL https://apt.devkitpro.org/devkitpro-pub.gpg | gpg --dearmor | sudo tee /etc/apt/keyrings/devkitpro.gpg > /dev/null
@@ -25,14 +25,14 @@ jobs:
         sudo /opt/devkitpro/pacman/bin/pacman-key --populate
         sudo /opt/devkitpro/pacman/bin/pacman -Sy --noconfirm switch-dev
 
-    - name: Build .nro
+    - name: Build NRO
       run: |
         export DEVKITPRO=/opt/devkitpro
         export DEVKITARM=$DEVKITPRO/devkitARM
         export DEVKITA64=$DEVKITPRO/devkitA64
         make
 
-    - name: Upload NRO
+    - name: Upload NRO artifact
       uses: actions/upload-artifact@v4
       with:
         name: timer_app.nro
